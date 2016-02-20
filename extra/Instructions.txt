@@ -1,0 +1,196 @@
+Scheduler Instructions to add to a sketch
+-----------------------------------------
+
+Unzip files in suitable a location
+
+Copy the following three files from Scheduler/template to your sketch folder
+or new sketch folder -
+
+    Schedule.cpp
+    Schedule.h
+    Tasklist.h
+
+Use example folder example ScheduleTest files for comparison for the following.
+    
+In your sketch ino file add the following lines
+
+1/ At top after other #include statements add extra line
+
+    #include  "Schedule'h"
+
+2/ near the end of setup() add this line -
+
+    Init( );
+    
+3/ In loop( ) add this line -
+
+    Run( );
+    
+That is all you need to get the main part of the code to run the scheduler.
+
+Now split your tasks out into functions of type
+
+        int function( int ID, int status )
+        {
+        
+        return value;
+        }
+ 
+ See below and Schedule.cpp or Tasklist.h for how to use the functions and see
+ ScheduleTest.ino for an example.
+ 
+ Edit Tasklist.h and find the following lines
+ 
+   // Add includes here for your function declarations to be included in task array
+   // or direct externs to taks top layer functions of type
+   //  extern int function( int, int );
+
+Add list of extern declarations to your top level task functions or an include 
+file that contains them.
+
+Find this section in Tasklist.h
+
+    int ( * const tasks[])( int, int ) =
+                    {
+                    // Insert your task functions names here in order of priority
+
+
+                    };
+
+Fill the initialiser list with function names of the top level functions for 
+your tasks as you would for a normal array.
+
+Ensure you save all edits.
+
+This is all you need to do to incorporate the scheduler into your sketch, but
+you must make sure your tasks operate as described below.
+
+
+Structure of task code.
+-----------------------
+    Running a task is actually calling a function that should be defined as
+
+        int function( int ID, int status )
+
+    Tasks are called and passed in parameters are
+
+        int ID      Task ID to recognise this task (have your task save this for helper
+                    functions)
+        int status  Current status on entry
+                        0 initialise task (only from Init function)
+                        1 start task
+                        2 - 32767 user state for normal running
+
+      This way state machines and switch statements can be used for a task to
+      determine what to do on this execution run.
+
+      If interval of scheduling has to change call setInterval during task
+      execution
+
+    Return value
+      The returned value is the NEW status for that task which tells scheduler
+      what to do next time. Values are
+
+         < -1 User error status (stops task execution)
+          -1  used as error code for getStatus of Invalid ID requested
+           0  Task stopped (if needed to be run will have to be started by Start)
+          > 0 Next status
+                1 start
+                2 - 32767 User status
+
+                
+Defines available for your code
+-------------------------------
+
+_MAX_TASKS          Number of tasks in schedule list
+MIN_TASK_INTERVAL   default 10ms for the minimum time a task can be rescheduled
+                    for, (next time the schedule loop will check for tasks to be 
+                    scheduled.
+
+Functions
+---------
+Run         Main scheduling loop each call is one loop of checking if time
+            to run tasks and executing them in order on the list.
+            
+              No Parameters
+              
+              Returns number of tasks run this pass
+                      0 nothing done
+                  or <0 for too early to process
+            
+Init        Initialise all tasks in list 
+            Task should set interval for task and return next state or 0
+            to leave stopped for now.
+            
+              No Parameters
+              
+              Returns number of tasks initialised
+                      0 nothing done
+                  or <0 error
+
+Log         Get pointer to copy of task table see Tasklist.h for structure
+
+                Parameters  NONE
+                
+                Returns     Pointer to array of structures (_MAX_TASKS long)
+
+getStats    Get pointer to structure of general statistics) and reset maximums
+            see Tasklist.h for structure
+            
+                Parameters  NONE
+                
+                Returns     Pointer to statistics structure
+
+setInterval Set a task's NEW interval and schedule new time from now if not
+            already running, if running just sets interval time.
+            
+                Parameters  ID to set interval on
+                            interval to set in milli-seconds
+
+                Return int  -2 invalid interval
+                            -1 invalid ID
+                             0  task is running
+                            > 0 task interval and execution time set
+                            
+getInterval Get a task's current interval
+
+                Parameters  int Task ID to check
+
+                Return int  < 0 invalid ID
+                            >= 0 Valid interval time
+                            
+getTime     Get a tasks next time to execute
+
+                Parameters  int Task ID to check
+
+                Return      unsigned long of time (or could be errors)
+                            0 could be execution time or error of invalid ID
+                            1 could be execution time or error of NO interval check
+                            
+            To confirm if error or not (for 0 or 1) compare against current milli-
+            second value from millis( ).
+            
+getStatus   Get a particular schedule status value
+            Remember 0 = stopped, <0 is error and >0 is running status
+            
+                Parameters  int Task ID to get status for
+
+                Return int  -1  invalid ID
+                           any other value Status (including other user errors -ve
+
+Start       Start a task (if not already running)
+
+                Parameters  int Task ID to start
+
+                Return int  -3  Task already started
+                            -2  No interval on task
+                            -1  invalid ID
+                             0  current task already running
+                            > 0 Valid
+
+FindID      Get ID of task from task top level function address
+
+                Parameters  function address
+
+                Return int  < 0 Invalid task address
+                            >= 0 Valid Task ID
