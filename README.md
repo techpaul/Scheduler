@@ -40,13 +40,13 @@ Uses hardware of
 See file IO.h for pin assignments    
     
 Main tasks
-1 Continuous read pot to set brightness    
-2 Continuous checksum and area of RAM
-3 Continuous flash One LED at 4Hz
-4 On demand (from a switch) flash a second LED at 10Hz for 2 seconds
-5 On demand (from a switch) display last checksum on LCD
-6 On demand (from a switch) send copy of last pass task list details to serial
-7 On demand (from a switch) send copy of last pass statistics details to serial
+1. Continuous read pot to set brightness    
+2. Continuous checksum and area of RAM
+3. Continuous flash One LED at 4Hz
+4. On demand (from a switch) flash a second LED at 10Hz for 2 seconds
+5. On demand (from a switch) display last checksum on LCD
+6. On demand (from a switch) send copy of last pass task list details to serial
+7. On demand (from a switch) send copy of last pass statistics details to serial
 
 ## Installation
 
