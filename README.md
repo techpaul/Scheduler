@@ -61,7 +61,7 @@ Three files to add to sketch ONLY one to edit to match your sketch.
 
 Paul Carpenter
 P C Services
-<mailto:sales@pcserviceselectronics.co.uk>
+<sales@pcserviceselectronics.co.uk>
 <http://www.pcserviceselectronics.co.uk>
 
 February 2016
