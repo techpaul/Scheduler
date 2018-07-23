@@ -59,9 +59,9 @@ Three files to add to sketch ONLY one to edit to match your sketch.
     
 ### Author
 
-Paul Carpenter
-P C Services
-<sales@pcserviceselectronics.co.uk>
-<http://www.pcserviceselectronics.co.uk>
+Paul Carpenter<br>
+P C Services<br>
+<sales@pcserviceselectronics.co.uk><br>
+<http://www.pcserviceselectronics.co.uk><br>
 
 February 2016
